@@ -1,16 +1,18 @@
 <template>
-  <a-layout style="min-height: 100vh">
-    <side-navigation />
-  </a-layout>
+  <a-row type="flex" justify="space-around" align="middle" style="height: 100vh">
+    <a-col :span="6">
+      <LoginForm :nameOnly=true />
+    </a-col>
+  </a-row>
 </template>
 
-<script type="ts">
+<script type="ts" lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import SideNavigation from '~/components/SideNavigation.vue'
+import LoginForm from '~/components/LoginForm.vue'
 @Component({
   components: {
-    SideNavigation
+    LoginForm
   }
 })
-export default class index extends Vue { }
+export default class login extends Vue { }
 </script>

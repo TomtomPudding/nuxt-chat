@@ -2,7 +2,6 @@
   <a-card title="Login Home">
     <a-form
       id="components-form-demo-normal-login"
-      :form="form"
       class="login-form"
       @submit="handleSubmit"
     >
@@ -17,7 +16,7 @@
           <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
         </a-input>
       </a-form-item>
-      <a-form-item>
+      <a-form-item v-if="!nameOnly">
         <a-input
           v-decorator="[
             'password',
@@ -38,10 +37,11 @@
               initialValue: true,
             },
           ]"
+          v-if="!nameOnly"
         >
           Remember me
         </a-checkbox>
-        <a class="login-form-forgot" href="">
+        <a class="login-form-forgot" href="" v-if="!nameOnly">
           Forgot password
         </a>
         <a-button type="primary" html-type="submit" class="login-form-button">
@@ -56,22 +56,21 @@
   </a-card>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class SampleComponent extends Vue {
+  @Prop({ type: Boolean }) readonly nameOnly!: boolean;
   beforeCreate() {
-    this.form = this.$form.createForm(this, { name: 'normal_login' });
-  },
-  methods: {
-    handleSubmit(e) {
-      e.preventDefault();
-      this.form.validateFields((err, values) => {
-        if (!err) {
-          console.log('Received values of form: ', values);
-        }
-      });
-    },
-  },
-};
+    console.log("a")
+    // this.form = this.$form.createForm(this, { name: 'normal_login' });
+  }
+
+  handleSubmit(event: Event) {
+    debugger
+  }
+}
 </script>
 <style>
 #components-form-demo-normal-login .login-form {

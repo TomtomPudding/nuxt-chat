@@ -9,7 +9,7 @@
             <div class="background-white"></div>
             <div class="arrow-white"></div>
             <div class="text-area">
-              <div>来てくれるかなモルモット君</div>
+              {{text}}
             </div>
           </div>
         </div>
@@ -18,6 +18,15 @@
     </div>
   </div>
 </template>
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+
+@Component
+export default class MyMesssageBox extends Vue {
+  @Prop({ type: String, required: true })
+  text: string
+}
+</script>
 
 <style lang="scss">
 

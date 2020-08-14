@@ -4,7 +4,8 @@
 export interface Chat {
   id: string,
   email: string,
-  name: UserName
+  name: UserName,
+  text: string
 }
 
 /**

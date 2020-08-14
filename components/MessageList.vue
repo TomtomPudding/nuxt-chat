@@ -8,10 +8,10 @@
 
           <div class="background-line">
             <div v-if="item.id == userId">
-              <MyMessageBox style="z-index: 10;background-color: inherit;" />
+              <UserMessageBox :text="item.text" style="z-index: 10;background-color: inherit;" />
             </div>
             <div v-else>
-              <MessageBox style="z-index: 10;background-color: inherit;" :style="item.space" />
+              <MemberMessageBox :text="item.text" style="z-index: 10;background-color: inherit;" :style="item.space" />
             </div>
             <div v-if="item.line" :style="item.line" class="line-shadow"></div>
             <div v-if="item.line" :style="item.line" class="line"></div>
@@ -26,8 +26,8 @@
 </template>
 <script lang="ts">
 import { Component, Watch, Vue } from 'nuxt-property-decorator'
-import MessageBox from '~/components/MessageBox.vue'
-import MyMessageBox from '~/components/MyMessageBox.vue'
+import MemberMessageBox from '~/components/MemberMessageBox.vue'
+import UserMessageBox from '~/components/UserMessageBox.vue'
 import {ChatLayout} from '@/interfaces/Chat'
 
 // 背景用
@@ -41,11 +41,11 @@ interface MyIterface {
 
 @Component({
   components: {
-    MessageBox,
-    MyMessageBox
+    MemberMessageBox,
+    UserMessageBox
   }
 })
-export default class messageList extends Vue {
+export default class MessageList extends Vue {
   data:ChatLayout[] = [];
   loading = false;
   busy =  false;
@@ -61,26 +61,26 @@ export default class messageList extends Vue {
   created() {
     // ここでデータを取得更新
     const initData = [
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "003", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null}];
+      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１", "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト2", "line": null, "space": null},
+      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト3", "line": null, "space": null},
+      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト4", "line": null, "space": null},
+      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト5", "line": null, "space": null},
+      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト6", "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト7", "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト8", "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト9", "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１0", "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１1", "line": null, "space": null},
+      {"id": "003", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１2", "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１3", "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１4", "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１5", "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１6", "line": null, "space": null},
+      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１7", "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１8", "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１9", "line": null, "space": null},
+      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト20", "line": null, "space": null}];
     this.data = initData
     if(this.data.length <= 0) return;
     // UI背景css 作成

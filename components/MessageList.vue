@@ -28,12 +28,16 @@
 import { Component, Watch, Vue } from 'nuxt-property-decorator'
 import MessageBox from '~/components/MessageBox.vue'
 import MyMessageBox from '~/components/MyMessageBox.vue'
+import {ChatLayout} from '@/interfaces/Chat'
 
 // 背景用
 var beforeLine =  [{"clip-path":""}];
-// directionは相手側の連続発言回数 最大５まで
+// directionは相手側の連続発言回数 最大3まで
 var bottomPoint = {"rightX": 0.0, "leftX" : 0.0, "reply": {"direction": true, "id": "", "count": 0}};
 var userPoint = {"rightX": 0.0, "leftX" : 0.0, "direction": true};
+interface MyIterface {
+    name?:string
+}
 
 @Component({
   components: {
@@ -42,11 +46,7 @@ var userPoint = {"rightX": 0.0, "leftX" : 0.0, "direction": true};
   }
 })
 export default class messageList extends Vue {
-  data = [
-    {"id": "", "email":"", "name": {"last":""},
-    "line": {"clip-path":""},
-    "space": {"margin-left": "0%", "margin-top": "0px"}},
-    {"id": "", "email":"", "name": {"last":""}, "line": null, "space": null}];
+  data:ChatLayout[] = [];
   loading = false;
   busy =  false;
   userId = "001";
@@ -62,7 +62,7 @@ export default class messageList extends Vue {
     // ここでデータを取得更新
     const initData = [
       {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
+      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
       {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
       {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
       {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "line": null, "space": null},
@@ -88,6 +88,7 @@ export default class messageList extends Vue {
 
 
     const data = this.data;
+    this.initPosition(data[0]);
     // 背景情報格納
     data.slice(1).forEach((item, index) =>{
       if((this.lastUserId != this.userId) && (item.id == this.userId)) {
@@ -95,7 +96,11 @@ export default class messageList extends Vue {
       } else if((this.lastUserId == this.userId) && (item.id != this.userId)) {
         this.drawLeftLine();
       } else {
-        this.drawNotUserLine();
+        if(this.userId == this.lastUserId) {
+          this.drawUserLine();
+        } else {
+          this.drawMemberLine();
+        }
       }
     });
   }
@@ -136,112 +141,101 @@ export default class messageList extends Vue {
   }
 
   // 以下のメソッドは背景生成処理
+  private initPosition(data: ChatLayout) {
+    this.lastUserId = data.id
+    if(this.userId == data.id) {
+      userPoint = {"rightX": 90, "leftX" : 85, "direction": true}
+    } else {
+      bottomPoint = {"rightX": 16, "leftX" : 9, "reply": {"id": data.id, "count": 0, "direction": true}}
+    }
+  }
+
+
+  // 相手から自分のメッセージに移動するとき
   private drawRightLine() {
     const leftX = bottomPoint.leftX
     const rightX = bottomPoint.rightX
 
-    if(beforeLine.length <= 1) {
-      beforeLine[beforeLine.length-1]["clip-path"] = "polygon(0% 0, 10% 0%, 90% 100%, 80% 100%)"
-      userPoint = {"rightX": 95, "leftX" : 85, "direction": true}
-    } else {
-      beforeLine[beforeLine.length-1]["clip-path"] = "polygon("+leftX+"% 0, "+rightX+"% 0%, 90% 100%, 80% 100%)"
-      userPoint = {"rightX": 95, "leftX" : 85, "direction": true}
-    }
-    this.lastUserId = this.data[beforeLine.length].id
-    this.data[beforeLine.length].line = beforeLine[beforeLine.length-1];
+    beforeLine[beforeLine.length-1]["clip-path"] = "polygon("+leftX+"% 0, "+rightX+"% 0%, 90% 100%, 80% 100%)"
+    userPoint = {"rightX": 90, "leftX" : 80, "direction": true}
 
-    beforeLine.push({"clip-path":""});
+    this.afterDraw();
   }
 
+  // 自分から相手のメッセージに移動するとき
   private drawLeftLine() {
     const leftX = userPoint.leftX
     const rightX = userPoint.rightX
-    const reply = bottomPoint.reply
+    var reply = bottomPoint.reply
 
-    reply.count = 0;
-    reply.direction = true;
-    reply.id = this.data[beforeLine.length].id;
+    reply = {"count": 0, "direction": true, "id": this.data[beforeLine.length].id}
 
-    if(beforeLine.length <= 1) {
-      beforeLine[beforeLine.length-1]["clip-path"] = "polygon(88% 0, 95% 0%, 16% 100%, 9% 100%)"
-      bottomPoint = {"rightX": 16.0, "leftX" : 9, "reply": reply}
-      this.data[beforeLine.length].space = {"margin-left": "0px", "margin-top": "30px"};
-    } else {
-      const reply = bottomPoint.reply
-      beforeLine[beforeLine.length-1]["clip-path"] = "polygon("+leftX+"% 0, "+rightX+"% 0%, 12% 100%, 5% 100%)"
-      bottomPoint = {"rightX": 7.0, "leftX" : 0, "reply": reply}
-      this.data[beforeLine.length].space = {"margin-left": "0px", "margin-top": "30px"};
-    }
-    this.lastUserId = this.data[beforeLine.length].id
-    this.data[beforeLine.length].line = beforeLine[beforeLine.length-1];
+    beforeLine[beforeLine.length-1]["clip-path"] = "polygon("+leftX+"% 0, "+rightX+"% 0%, 12% 100%, 5% 100%)"
+    bottomPoint = {"rightX": 12.0, "leftX" : 5.0, "reply": reply}
 
-    beforeLine.push({"clip-path":""});
+    this.data[beforeLine.length].space = {"margin-left": "0px", "margin-top": "30px"};
+    this.afterDraw();
   }
 
-  private drawNotUserLine() {
-    if(beforeLine.length <= 1) {
-      if(this.userId == this.lastUserId) {
-        beforeLine[beforeLine.length-1]["clip-path"] = "polygon(95% 0, 100% 0%,67% 100%, 60% 100%)"
-        userPoint = {"rightX": 67, "leftX" : 60, "direction": false}
-      } else {
-        const reply = bottomPoint.reply
+  // 連続したユーザのメッセージ
+  private drawUserLine() {
+    const leftX = userPoint.leftX
+    const rightX = userPoint.rightX
+    const len = this.getLineLen();
+    const width =this.getLineWidth();
+
+    // 線の向きを決める
+    if(userPoint.direction) {
+      beforeLine[beforeLine.length-1]["clip-path"]
+        = "polygon("+leftX+"% 0, "+rightX+"% 0%,"+(rightX-width+len)+"% 100%, "+(rightX-width)+"% 100%)"
+      userPoint = {"rightX": (rightX-width+len), "leftX" : (rightX-width), "direction": !userPoint.direction}
+    } else {
+      beforeLine[beforeLine.length-1]["clip-path"]
+        = "polygon("+leftX+"% 0, "+rightX+"% 0%,"+(leftX+width+len)+"% 100%, "+(leftX+width)+"% 100%)"
+      userPoint = {"rightX": (leftX+width+len), "leftX" : (leftX+width), "direction": !userPoint.direction}
+    }
+
+    this.afterDraw();
+  }
+
+  // 連続したメンバーのメッセージ
+  private drawMemberLine() {
+    const leftX = bottomPoint.leftX
+    const rightX = bottomPoint.rightX
+    var reply = bottomPoint.reply
+
+    if(reply.id == this.data[beforeLine.length].id) {
+      const len = this.getLineLen();
+      const width = this.getLineWidth();
+
+      if(reply.count < 3) {
         reply.count = reply.count + 1;
-        beforeLine[beforeLine.length-1]["clip-path"] = "polygon(4% 0, 9% 0%, 16% 100%, 9% 100%)"
-        bottomPoint = {"rightX": 16, "leftX" : 9, "reply": reply}
-        this.data[beforeLine.length].space = {"margin-left": 20 + "px", "margin-top": "0px"};
+      } else {
+        reply.count = reply.count - 1;
+      }
+      this.data[beforeLine.length].space = {"margin-left": 20*reply.count + "px", "margin-top": "0px"};
+      if(reply.direction) {
+        beforeLine[beforeLine.length-1]["clip-path"]
+          = "polygon("+leftX+"% 0, "+rightX+"% 0%, "+(rightX+width+len)+"% 100%, "+(rightX+width)+"% 100%)"
+        reply.direction = !reply.direction
+
+        bottomPoint = {"rightX": (rightX+width+len), "leftX" : (rightX+width), "reply": reply}
+      }else {
+        beforeLine[beforeLine.length-1]["clip-path"]
+          = "polygon("+leftX+"% 0, "+rightX+"% 0%, "+(leftX-width+len)+"% 100%, "+(leftX-width)+"% 100%)"
+        reply.direction = !reply.direction
+        bottomPoint = {"rightX": (leftX-width+len), "leftX" : (leftX-width), "reply": reply}
       }
     } else {
-      if(this.userId == this.lastUserId) {
-        const leftX = userPoint.leftX
-        const rightX = userPoint.rightX
-        const len = this.getLineLen();
-        const width =this.getLineWidth();
-
-        if(userPoint.direction) {
-          beforeLine[beforeLine.length-1]["clip-path"]
-            = "polygon("+leftX+"% 0, "+rightX+"% 0%,"+(rightX-width+len)+"% 100%, "+(rightX-width)+"% 100%)"
-          userPoint = {"rightX": (rightX-width+len), "leftX" : (rightX-width), "direction": !userPoint.direction}
-        } else {
-          beforeLine[beforeLine.length-1]["clip-path"]
-            = "polygon("+leftX+"% 0, "+rightX+"% 0%,"+(leftX+width+len)+"% 100%, "+(leftX+width)+"% 100%)"
-          userPoint = {"rightX": (leftX+width+len), "leftX" : (leftX+width), "direction": !userPoint.direction}
-        }
-      } else {
-        const leftX = bottomPoint.leftX
-        const rightX = bottomPoint.rightX
-        const reply = bottomPoint.reply
-
-        if(reply.id == this.data[beforeLine.length].id) {
-          const len = this.getLineLen();
-          const width = this.getLineWidth();
-
-          if(reply.count < 3) {
-            reply.count = reply.count + 1;
-          } else {
-            reply.count = reply.count - 1;
-          }
-          this.data[beforeLine.length].space = {"margin-left": 20*reply.count + "px", "margin-top": "0px"};
-
-          if(userPoint.direction) {
-            beforeLine[beforeLine.length-1]["clip-path"]
-              = "polygon("+leftX+"% 0, "+rightX+"% 0%, "+(width+len-leftX)+"% 100%, "+(width-leftX)+"% 100%)"
-            bottomPoint = {"rightX": (width+len-leftX), "leftX" : (width-leftX), "reply": reply}
-          }else {
-            beforeLine[beforeLine.length-1]["clip-path"]
-              = "polygon("+leftX+"% 0, "+rightX+"% 0%, "+(width+len-rightX)+"% 100%, "+(width-rightX)+"% 100%)"
-            bottomPoint = {"rightX": (width+len-rightX), "leftX" : (width-rightX), "reply": reply}
-          }
-          reply.direction = !reply.direction
-        } else {
-          reply.count = 0;
-          reply.direction = true;
-          reply.id = this.data[beforeLine.length].id;
-          this.data[beforeLine.length].space = {"margin-left": 20*reply.count + "px", "margin-top": "0px"};
-          beforeLine[beforeLine.length-1]["clip-path"] = "polygon("+leftX+"% 0, "+rightX+"% 0%, 12% 100%, 7% 100%)"
-          bottomPoint = {"rightX": 12, "leftX" : 7, "reply": reply}
-        }
-      }
+      reply = {"count": 0, "direction": true, "id": this.data[beforeLine.length].id}
+      this.data[beforeLine.length].space = {"margin-left": 20*reply.count + "px", "margin-top": "0px"};
+      beforeLine[beforeLine.length-1]["clip-path"] = "polygon("+leftX+"% 0, "+rightX+"% 0%, 16% 100%, 9% 100%)"
+      bottomPoint = {"rightX": 16, "leftX" : 9, "reply": reply}
     }
+    this.afterDraw();
+  }
+
+  private afterDraw() {
     this.lastUserId = this.data[beforeLine.length].id
     this.data[beforeLine.length].line = beforeLine[beforeLine.length-1];
 

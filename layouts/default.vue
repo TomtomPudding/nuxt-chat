@@ -16,7 +16,10 @@ html {
 }
 
 body {
-  font-family: 'M PLUS 1p'
+  font-family: 'M PLUS 1p';
+
+  /* 基本スクロール禁止 */
+  overflow: hidden;
 }
 
 *,

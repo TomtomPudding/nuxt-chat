@@ -8,9 +8,7 @@
             <div class="background-black"></div>
             <div class="background-white"></div>
             <div class="arrow-white"></div>
-            <div class="text-area">
-              {{text}}
-            </div>
+            <div class="text-area" v-html="text"></div>
           </div>
         </div>
 
@@ -22,9 +20,9 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component
-export default class MyMesssageBox extends Vue {
+export default class UserMesssageBox extends Vue {
   @Prop({ type: String, required: true })
-  text: string
+  text: string;
 }
 </script>
 

@@ -16,9 +16,7 @@
             <div class="background-black"></div>
             <div class="arrow-black"></div>
             <div class="reaction">？</div>
-            <div class="text-area">
-              <div>{{text}}</div>
-            </div>
+            <div class="text-area" v-html="text"></div>
           </div>
         </div>
 

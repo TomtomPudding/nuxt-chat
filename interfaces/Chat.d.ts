@@ -3,8 +3,7 @@
  */
 export interface Chat {
   id: string,
-  email: string,
-  name: UserName,
+  name: string,
   text: string
 }
 

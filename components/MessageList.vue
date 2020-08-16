@@ -3,24 +3,27 @@
     <div
       class="message-list"
     >
-      <a-list :grid="{ gutter: 0}" :data-source="data">
-        <a-list-item  style="margin-bottom: 0" slot="renderItem" slot-scope="item, index">
+      <div class="message-box" ref="message">
+        <a-list :grid="{ gutter: 0}" :data-source="data">
+          <a-list-item  style="margin-bottom: 0" slot="renderItem" slot-scope="item, index">
 
-          <div class="background-line">
-            <div v-if="item.id == userId">
-              <UserMessageBox :text="item.text" style="z-index: 10;background-color: inherit;" />
+            <div class="background-line">
+              <div v-if="item.id == userId">
+                <UserMessageBox :text="item.text" style="z-index: 10;background-color: inherit;" />
+              </div>
+              <div v-else>
+                <MemberMessageBox :text="item.text" style="z-index: 10;background-color: inherit;" :style="item.space" />
+              </div>
+              <div v-if="item.line" :style="item.line" class="line-shadow"></div>
+              <div v-if="item.line" :style="item.line" class="line"></div>
             </div>
-            <div v-else>
-              <MemberMessageBox :text="item.text" style="z-index: 10;background-color: inherit;" :style="item.space" />
-            </div>
-            <div v-if="item.line" :style="item.line" class="line-shadow"></div>
-            <div v-if="item.line" :style="item.line" class="line"></div>
+          </a-list-item>
+          <div v-if="loading && !busy" class="demo-loading-container">
+            <a-spin />
           </div>
-        </a-list-item>
-        <div v-if="loading && !busy" class="demo-loading-container">
-          <a-spin />
-        </div>
-      </a-list>
+        </a-list>
+      </div>
+      <MessageForm :name="userName" :id="userId" @addMessage="addMessage" />
     </div>
   </div>
 </template>
@@ -28,21 +31,20 @@
 import { Component, Watch, Vue } from 'nuxt-property-decorator'
 import MemberMessageBox from '~/components/MemberMessageBox.vue'
 import UserMessageBox from '~/components/UserMessageBox.vue'
-import {ChatLayout} from '@/interfaces/Chat'
+import MessageForm from '~/components/MessageForm.vue'
+import {Chat, ChatLayout} from '@/interfaces/Chat'
 
 // 背景用
 var beforeLine =  [{"clip-path":""}];
 // directionは相手側の連続発言回数 最大3まで
 var bottomPoint = {"rightX": 0.0, "leftX" : 0.0, "reply": {"direction": true, "id": "", "count": 0}};
 var userPoint = {"rightX": 0.0, "leftX" : 0.0, "direction": true};
-interface MyIterface {
-    name?:string
-}
 
 @Component({
   components: {
     MemberMessageBox,
-    UserMessageBox
+    UserMessageBox,
+    MessageForm
   }
 })
 export default class MessageList extends Vue {
@@ -50,6 +52,7 @@ export default class MessageList extends Vue {
   loading = false;
   busy =  false;
   userId = "001";
+  userName = "Tom"
   lastUserId = "";
 
   beforeMount() {
@@ -58,29 +61,58 @@ export default class MessageList extends Vue {
     });
   }
 
+  @Watch("data")
+  onChangeData() {
+    this.$nextTick(() => {
+      console.log("aa")
+      const chatLog:Element = this.$refs.message as Element
+      if (!chatLog) return
+      chatLog.scrollTop = chatLog.scrollHeight
+    });
+  }
+
+
   created() {
     // ここでデータを取得更新
     const initData = [
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１", "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト2", "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト3", "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト4", "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト5", "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト6", "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト7", "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト8", "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト9", "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１0", "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１1", "line": null, "space": null},
-      {"id": "003", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１2", "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１3", "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１4", "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１5", "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１6", "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１7", "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１8", "line": null, "space": null},
-      {"id": "002", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト１9", "line": null, "space": null},
-      {"id": "001", "email":"a.com", "name": {"last":"Tom"}, "text": "テスト20", "line": null, "space": null}];
+      {"id": "001", "name": "Tom", "text": "テスト１", "line": null, "space": null},
+      {"id": "002", "name": "Tom", "text": "テスト2", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト6", "line": null, "space": null},
+      {"id": "002", "name": "Tom", "text": "テスト7", "line": null, "space": null},
+      {"id": "002", "name": "Tom", "text": "テスト8", "line": null, "space": null},
+      {"id": "002", "name": "Tom", "text": "テスト9", "line": null, "space": null},
+      {"id": "002", "name": "Tom", "text": "テスト１0", "line": null, "space": null},
+      {"id": "002", "name": "Tom", "text": "テスト１1", "line": null, "space": null},
+      {"id": "003", "name": "Tom", "text": "テスト１2", "line": null, "space": null},
+      {"id": "002", "name": "Tom", "text": "テスト１3", "line": null, "space": null},
+      {"id": "002", "name": "Tom", "text": "テスト１4", "line": null, "space": null},
+      {"id": "002", "name": "Tom", "text": "テスト１5", "line": null, "space": null},
+      {"id": "002", "name": "Tom", "text": "テスト１6", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト１7", "line": null, "space": null},
+      {"id": "002", "name": "Tom", "text": "テスト１8", "line": null, "space": null},
+      {"id": "002", "name": "Tom", "text": "テスト１9", "line": null, "space": null},
+      {"id": "001", "name": "Tom", "text": "テスト20", "line": null, "space": null}];
     this.data = initData
     if(this.data.length <= 0) return;
     // UI背景css 作成
@@ -117,19 +149,27 @@ export default class MessageList extends Vue {
       // });
   }
 
-  handleInfiniteOnLoad() {
-      // const data = this.data;
-      // this.loading = true;
-      // if (data.length > 14) {
-      //   this.$message.warning('Infinite List loaded all');
-      //   this.busy = true;
-      //   this.loading = false;
-      //   return;
-      // }
-      // this.fetchData(res => {
-      //   this.data = data.concat(res.results);
-      //   this.loading = false;
-      // });
+  addMessage(message: Chat) {
+    message.text = message.text.replace("\n","<br>");
+    const data:ChatLayout =
+      { "id": message.id, "name": message.name, "text": message.text, "line": null, "space": null }
+    if(this.lastUserId == "") {
+      this.initPosition(data);
+      return;
+    }
+
+    this.data.push(data)
+    if((this.lastUserId != this.userId) && (message.id == this.userId)) {
+      this.drawRightLine();
+    } else if((this.lastUserId == this.userId) && (message.id != this.userId)) {
+      this.drawLeftLine();
+    } else {
+      if(this.userId == this.lastUserId) {
+        this.drawUserLine();
+      } else {
+        this.drawMemberLine();
+      }
+    }
   }
 
   private emptyUser() {
@@ -187,12 +227,12 @@ export default class MessageList extends Vue {
     // 線の向きを決める
     if(userPoint.direction) {
       beforeLine[beforeLine.length-1]["clip-path"]
-        = "polygon("+leftX+"% 0, "+rightX+"% 0%,"+(rightX-width+len)+"% 100%, "+(rightX-width)+"% 100%)"
-      userPoint = {"rightX": (rightX-width+len), "leftX" : (rightX-width), "direction": !userPoint.direction}
+        = "polygon("+leftX+"% 0, "+rightX+"% 0%,"+(rightX-width+len-1)+"% 100%, "+(rightX-width-1)+"% 100%)"
+      userPoint = {"rightX": (rightX-width+len-1), "leftX" : (rightX-width-1), "direction": !userPoint.direction}
     } else {
       beforeLine[beforeLine.length-1]["clip-path"]
-        = "polygon("+leftX+"% 0, "+rightX+"% 0%,"+(leftX+width+len)+"% 100%, "+(leftX+width)+"% 100%)"
-      userPoint = {"rightX": (leftX+width+len), "leftX" : (leftX+width), "direction": !userPoint.direction}
+        = "polygon("+leftX+"% 0, "+rightX+"% 0%,"+(leftX+width+len-6)+"% 100%, "+(leftX+width-6)+"% 100%)"
+      userPoint = {"rightX": (leftX+width+len-6), "leftX" : (leftX+width-6), "direction": !userPoint.direction}
     }
 
     this.afterDraw();
@@ -258,11 +298,21 @@ export default class MessageList extends Vue {
 .message-area {
   background-color: #d5000055;
   .message-list {
-    max-width: 480px;
+    max-width: 520px;
     padding: 8px 24px;
     background-color: #d50000;
-    overflow: auto;
+    max-height: 86vh;
     height: 86vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    .message-box {
+      overflow-y: auto;
+      overflow-x: hidden;
+      max-height: 80vh;
+      padding: 0px 20px;
+    }
 
     .ant-list-grid .ant-col > .ant-list-item {
       margin-bottom: 0px;

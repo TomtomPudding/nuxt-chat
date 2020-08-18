@@ -301,8 +301,8 @@ export default class MessageList extends Vue {
     max-width: 520px;
     padding: 8px 24px;
     background-color: #d50000;
-    max-height: 86vh;
-    height: 86vh;
+    max-height: 87vh;
+    height: 87vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;

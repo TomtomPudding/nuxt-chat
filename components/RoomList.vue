@@ -1,6 +1,6 @@
 <template>
-    <a-layout-sider theme="light"  :style="{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }" class="left-bar" collapsible>
-        <a-menu theme="light" :defaultSelectedKeys="['1']" mode="inline">
+    <a-layout-sider theme="dark"  :style="{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }" class="left-bar">
+        <a-menu theme="dark" :defaultSelectedKeys="['1']" mode="inline">
             <a-menu-item key="1">
             <a-icon type="pie-chart" />
             <span>Option 1</span>
@@ -29,6 +29,6 @@
 </template>
 <style>
 .left-bar {
-  border-right: 1px solid #e8e8e8;
+  border-right: 1px solid #666666;
 }
 </style>

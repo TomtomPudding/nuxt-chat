@@ -8,8 +8,9 @@
 
 <style>
 .header {
-  background: #fff;
-  box-shadow: 0 2px 8px #f0f1f2;
+  background-color: #001529;
+  color: #e8e8e8;
+  border-bottom: 1px solid #666666;
   position: relative;
   max-width: 100%;
 }

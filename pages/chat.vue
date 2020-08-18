@@ -37,10 +37,11 @@ export default class login extends Vue { }
 </script>
 <style>
 .header-message {
-  background: #fff;
+  background-color: #001529;
+  color: #e8e8e8;
+  font-size: 18px;
   max-width: 100%;
   padding-right: 24px;
   padding-left: 24px;
-  border-bottom: 1px solid #e8e8e8;
 }
 </style>

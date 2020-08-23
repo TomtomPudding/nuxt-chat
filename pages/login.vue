@@ -1,31 +1,19 @@
 <template>
- <div class="page">
-   <label>
-     <span>
-       お名前:
-     </span>
-     <input
-       type="text"
-       v-model="user.name"
-     >
-   </label>
-   <label>
-     <span>
-       email:
-     </span>
-     <input
-       type="text"
-       v-model="user.email"
-     >
-   </label>
-   <button
-     type="button"
-     @click="submit"
-   >
-     Submit
-   </button>
- </div>
+  <a-card hoverable style="width: 450px">
+    <template slot="actions" class="ant-card-actions">
+      <a-icon key="setting" type="setting" />
+      <a-icon key="edit" type="edit" />
+      <a-icon key="ellipsis" type="ellipsis" />
+    </template>
+    <a-card-meta title="Card title" description="This is the description">
+      <a-avatar
+        slot="avatar"
+        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+      />
+    </a-card-meta>
+  </a-card>
 </template>
+
 
 <script>
 import firebase from '@/plugins/firebase'

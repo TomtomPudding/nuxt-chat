@@ -5,6 +5,15 @@
       @submit="handleSubmit">
       <a-form-item>
         <a-input
+          v-decorator="['name',
+            { rules: [{ required: true, message: 'Please input your nickname!', whitespace: true }],},]"
+          placeholder="name"
+        >
+          <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
+        </a-input>
+      </a-form-item>
+      <a-form-item>
+        <a-input
           v-decorator="[
             'email',
             { rules: [
@@ -31,7 +40,7 @@
       </a-form-item>
       <a-form-item>
         <a-button type="primary" html-type="submit" class="login-form-button">Log in</a-button>
-        <a href="/register">register now!</a>
+        <a href="/login">Create your account!</a>
       </a-form-item>
     </a-form>
   </a-card>
@@ -41,7 +50,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class LoginFormComponent extends Vue {
+export default class RegisterFormComponent extends Vue {
   form: any;
 
   created() {
@@ -54,7 +63,7 @@ export default class LoginFormComponent extends Vue {
       console.log(err)
       if (err == null) {
         console.log('Received values of form: ', values);
-        return this.$emit("LoginUser", values["email"], values["confile"]);
+        return this.$emit("createNewUser", values["name"], values["email"], values["confile"]);
       }
     });
   }

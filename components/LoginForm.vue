@@ -30,7 +30,7 @@
         </a-input>
       </a-form-item>
       <a-form-item>
-        <a-button type="primary" html-type="submit" class="login-form-button">Log in</a-button>
+        <a-button type="primary" html-type="submit" class="login-form-button" :loading="isLoading">Log in</a-button>
         <a href="/register">register now!</a>
       </a-form-item>
     </a-form>
@@ -43,13 +43,16 @@ import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class LoginFormComponent extends Vue {
   form: any;
+  isLoading: boolean = false;
 
   created() {
     this.form = Vue.prototype.$form.createForm(this, { name: 'login' });
   }
 
   handleSubmit(event: Event) {
-    event.preventDefault();
+    this.isLoading = true;
+    event.preventDefault()
+
     this.form.validateFields((err: any, values: any) => {
       console.log(err)
       if (err == null) {
@@ -57,6 +60,7 @@ export default class LoginFormComponent extends Vue {
         return this.$emit("LoginUser", values["email"], values["confile"]);
       }
     });
+    this.isLoading = false;
   }
 }
 </script>

@@ -3,7 +3,7 @@
         <a-layout-header class="sub-header header-right">
           <div class="icon">
             Member
-            <a-button shape="circle" icon="close" />
+            <a-icon type="close" />
           </div>
         </a-layout-header>
         <div>

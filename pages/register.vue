@@ -10,6 +10,8 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import RegisterForm from '~/components/RegisterForm.vue'
 import firebase from '@/plugins/firebase'
+import { auth } from '@/store/auth'
+import { SignUpForm } from '~/interfaces/Auth'
 
 @Component({
   components: {
@@ -17,18 +19,16 @@ import firebase from '@/plugins/firebase'
   }
 })
 export default class login extends Vue {
-  createNewUser(name: string, email: string, password: string) {
-    console.log("aa")
-    console.log(name, email, password)
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-      .then((result: any) => {
-        console.log(result);
-        this.$router.push("/");
-      }).catch(function(error: any) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log(errorCode, errorMessage);
+
+  async createNewUser(form: SignUpForm) {
+    console.log(form)
+    try {
+      auth.signUp(form).then(result =>{
+        this.$router.push("/chat")
       });
+    } catch(error) {
+      console.log(error.message);
+    };
   }
 }
 </script>

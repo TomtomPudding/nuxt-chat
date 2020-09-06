@@ -64,7 +64,6 @@ export default class MessageList extends Vue {
   @Watch("data")
   onChangeData() {
     this.$nextTick(() => {
-      console.log("aa")
       const chatLog:Element = this.$refs.message as Element
       if (!chatLog) return
       chatLog.scrollTop = chatLog.scrollHeight
@@ -301,8 +300,8 @@ export default class MessageList extends Vue {
     max-width: 520px;
     padding: 8px 24px;
     background-color: #d50000;
-    max-height: 87vh;
-    height: 87vh;
+    max-height: 87.8vh;
+    height: 87.8vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;

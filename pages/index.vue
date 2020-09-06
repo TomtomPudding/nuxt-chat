@@ -11,6 +11,8 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import LoginForm from '~/components/LoginForm.vue'
 import firebase from '@/plugins/firebase'
+import { auth } from '@/store/auth'
+import { SignInForm } from '~/interfaces/Auth';
 
 @Component({
   components: {
@@ -18,17 +20,14 @@ import firebase from '@/plugins/firebase'
   }
 })
 export default class login extends Vue {
-  LoginUser(email: string, password: string) {
-    console.log(email, password)
-    firebase.auth().signInWithEmailAndPassword(email, password)
-      .then((result: any) => {
-        console.log(result);
-        this.$router.push("/chat");
-      }).catch(function(error: any) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-      });
+  async LoginUser(form: SignInForm) {
+    console.log(form.email, form.password);
+    try {
+      auth.signIn(form);
+      this.$router.push("/chat");
+    } catch(error) {
+      console.log(error.message);
+    }
   }
 }
 </script>

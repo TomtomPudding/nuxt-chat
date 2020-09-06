@@ -19,7 +19,7 @@
       <a-form-item>
         <a-input
           v-decorator="[
-            'confile',
+            'password',
             { rules: [
                 { required: true, message: 'Please confirm your password!', }, ],
             }, ]"
@@ -39,11 +39,29 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import { SignInForm } from '~/interfaces/Auth';
+import { auth } from '@/store/auth';
+import firebase from '@/plugins/firebase';
 
 @Component
 export default class LoginFormComponent extends Vue {
   form: any;
   isLoading: boolean = false;
+
+  beforeCreate() {
+    if(auth.user && !this.$route.query?.page) {
+      return;
+    }
+    firebase.auth().onAuthStateChanged(async currentUser => {
+      auth.alreadyLoggedIn();
+      if (auth.user) {
+        const path:string = this.$route.query?.page?.toString() || "chat";
+        this.$router.push(path)
+      } else {
+        this.$router.push("/")
+      }
+    })
+  }
 
   created() {
     this.form = Vue.prototype.$form.createForm(this, { name: 'login' });
@@ -51,13 +69,15 @@ export default class LoginFormComponent extends Vue {
 
   handleSubmit(event: Event) {
     this.isLoading = true;
-    event.preventDefault()
+    event.preventDefault();
 
     this.form.validateFields((err: any, values: any) => {
       console.log(err)
       if (err == null) {
         console.log('Received values of form: ', values);
-        return this.$emit("LoginUser", values["email"], values["confile"]);
+        const formValue: SignInForm =
+        {"email" :values["email"], "password": values["password"]};
+        return this.$emit("LoginUser", formValue);
       }
     });
     this.isLoading = false;

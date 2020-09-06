@@ -24,8 +24,8 @@ export default class Auth extends VuexModule{
     if(this.user === null && currentUser !== null) {
       this.setUser({
         "uid": currentUser.uid,
-        "name": currentUser.displayName || "",
-        "photoURL": currentUser.photoURL || "",
+        "name": currentUser.displayName || "unknown",
+        "photoURL": currentUser.photoURL || "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
         "friends": [],
         "rooms": []
       });
@@ -40,17 +40,17 @@ export default class Auth extends VuexModule{
       this.signOut();
     }
 
-    firebase.auth().signInWithEmailAndPassword(form.email, form.password)
+    const result = firebase.auth().signInWithEmailAndPassword(form.email, form.password)
     .catch(function(error: firebase.auth.Error) {
       throw new Error(error.code + ": " + error.message)
     });
 
-    const currentUser: firebase.User | null = firebase.auth().currentUser;
+    const currentUser: firebase.User | null = (await result).user;
     if(currentUser) {
       this.setUser({
         "uid": currentUser.uid,
-        "name": currentUser.displayName || "",
-        "photoURL": currentUser.photoURL || "",
+        "name": currentUser.displayName || "unknown",
+        "photoURL": currentUser.photoURL || "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
         "friends": [],
         "rooms": []
       });
@@ -82,12 +82,11 @@ export default class Auth extends VuexModule{
 
     const currentUser = (await result).user
     if(currentUser) {
-      currentUser.updateProfile({
+      await currentUser.updateProfile({
         "displayName" : form.name,
         "photoURL" : form.photoURL
-      }).then(result => {
-          this.signIn({"email": form.email, "password": form.password})
-        });
+      })
+      await this.signIn({"email": form.email, "password": form.password})
     }
   }
 

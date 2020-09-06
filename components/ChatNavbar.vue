@@ -11,10 +11,10 @@
         </div>
       </template>
       <template slot="title">
-        <span>トム</span>
+        <span>{{ user.name }}</span>
       </template>
       <a-button shape="circle">
-        <a-avatar style="color: #f56a00; backgroundColor: #fde3cf" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+        <a-avatar style="color: #f56a00; backgroundColor: #fde3cf" :src="user.photoURL" />
       </a-button>
     </a-popover>
   </a-layout-header>
@@ -27,6 +27,16 @@ import { auth } from '@/store/auth'
 export default class LoginFormComponent extends Vue {
   form: any;
   isLoading: boolean = false;
+
+  get user() {
+    return auth.user || {
+      "uid": "",
+      "name": "unknown",
+      "photoURL": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+      "friends": [],
+      "rooms": []
+    };
+  }
 
   async logout() {
     await auth.signOut().catch(console.log);

@@ -23,9 +23,8 @@ export default class login extends Vue {
   async createNewUser(form: SignUpForm) {
     console.log(form)
     try {
-      auth.signUp(form).then(result =>{
-        this.$router.push("/chat")
-      });
+      await auth.signUp(form);
+      this.$router.push("/chat");
     } catch(error) {
       console.log(error.message);
     };

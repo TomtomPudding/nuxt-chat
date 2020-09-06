@@ -23,7 +23,7 @@ export default class login extends Vue {
   async LoginUser(form: SignInForm) {
     console.log(form.email, form.password);
     try {
-      auth.signIn(form);
+      await auth.signIn(form);
       this.$router.push("/chat");
     } catch(error) {
       console.log(error.message);

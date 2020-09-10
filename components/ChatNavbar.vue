@@ -6,12 +6,30 @@
 
     <a-popover placement="bottom" trigger="click">
       <template slot="content">
-        <div style="text-align: center" @click="logout">
+        <div class="ant-card-meta-detail card-meta">
+          <div class="ant-card-meta-title" style="margin-bottom: 0px;">{{user.name}}</div>
+          <div class="ant-card-meta-description">{{user.email}}</div>
+        </div>
+        <div class="card-main">
+          <a-row class="row">
+            <a-col :span="5" class="row-title">
+              UserId
+            </a-col>
+            <a-col :span="19">
+              {{user.uid}}
+            </a-col>
+          </a-row>
+        </div>
+        <div style="text-align: center; padding-top: 20px;" @click="logout">
           <a-button type="danger" icon="logout" html-type="submit" :loading="isLoading">Log Out</a-button>
         </div>
       </template>
       <template slot="title">
-        <span>{{ user.name }}</span>
+        <img
+          slot="cover"
+          :src="user.photoURL"
+          width="250" height="250"
+        />
       </template>
       <a-button shape="circle">
         <a-avatar style="color: #f56a00; backgroundColor: #fde3cf" :src="user.photoURL" />
@@ -32,6 +50,7 @@ export default class LoginFormComponent extends Vue {
     return auth.user || {
       "uid": "",
       "name": "unknown",
+      "email": "",
       "photoURL": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
       "friends": [],
       "rooms": []
@@ -44,7 +63,7 @@ export default class LoginFormComponent extends Vue {
   }
 }
 </script>
-<style>
+<style lang="scss">
 .header {
   background-color: #001529;
   color: #e8e8e8;
@@ -55,9 +74,32 @@ export default class LoginFormComponent extends Vue {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  .logo {
+    font-size: 18px;
+  }
 }
 
-.header .logo {
-  font-size: 18px;
+.card-meta {
+  text-align: center;
 }
+
+.card-main {
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  .row {
+    padding: 2px;
+    border-top: solid;
+    border-bottom:solid;
+    border-color:#f3f3f3;
+    border-width: 1px;
+
+    .row-title {
+      color: #666666;
+    }
+  }
+}
+
+
 </style>

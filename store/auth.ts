@@ -25,6 +25,7 @@ export default class Auth extends VuexModule{
       this.setUser({
         "uid": currentUser.uid,
         "name": currentUser.displayName || "unknown",
+        "email": currentUser.email || "",
         "photoURL": currentUser.photoURL || "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
         "friends": [],
         "rooms": []
@@ -50,6 +51,7 @@ export default class Auth extends VuexModule{
       this.setUser({
         "uid": currentUser.uid,
         "name": currentUser.displayName || "unknown",
+        "email": currentUser.email || "",
         "photoURL": currentUser.photoURL || "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
         "friends": [],
         "rooms": []

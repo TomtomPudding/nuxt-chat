@@ -1,7 +1,5 @@
-import { Middleware } from '@nuxt/types'
-import { auth } from '@/store/auth'
-import { User } from '@/interfaces/User';
-import firebase from '@/plugins/firebase';
+import { Middleware } from '@nuxt/types';
+import { auth } from '@/store/auth';
 
 // 認証チェック対象外のパス
 const targetPath:string[] = ["index", "register"]

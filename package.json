@@ -15,7 +15,9 @@
     "@nuxt/typescript-runtime": "^0.4.10",
     "@nuxtjs/axios": "^5.11.0",
     "ant-design-vue": "^1.6.2",
-    "nuxt": "^2.13.0"
+    "firebase": "^7.17.1",
+    "nuxt": "^2.13.0",
+    "vue-infinite-loading": "^2.4.5"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^1.0.3",
@@ -26,7 +28,11 @@
     "eslint": "^7.2.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-nuxt": "^1.0.0",
+    "node-sass": "^4.14.1",
     "nuxt-property-decorator": "^2.7.2",
-    "prettier-eslint": "^9.0.1"
+    "prettier-eslint": "^9.0.1",
+    "sass-loader": "^9.0.2",
+    "vuex-module-decorators": "^0.17.0",
+    "lodash": ">=4.17.19"
   }
 }

@@ -40,6 +40,7 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import { auth } from '@/store/auth'
+import { Room } from '@/interfaces/Room';
 
 @Component
 export default class LoginFormComponent extends Vue {

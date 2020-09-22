@@ -1,21 +1,30 @@
 import { Module, VuexModule, Mutation, Action, getModule } from 'vuex-module-decorators';
 import { User } from '@/interfaces/User';
 import { SignUpForm, SignInForm } from '@/interfaces/Auth'
+import { Room } from '@/interfaces/Room';
 import firebase from '@/plugins/firebase';
 
 import Vue from "vue";
 import Vuex from "vuex";
 Vue.use(Vuex);
 
+
+const db = firebase.firestore();
 const store = new Vuex.Store<User>({});
 
 @Module({dynamic: true, store ,stateFactory: true , name: "auth", namespaced: true})
 export default class Auth extends VuexModule{
   user: User | null = null;
+  rooms: Room[] = [];
 
   @Mutation
   setUser(user: User | null) {
     this.user = user;
+  }
+
+  @Mutation
+  setRoom(rooms: Room[]) {
+    this.rooms = rooms;
   }
 
   @Action({rawError: true})
@@ -90,6 +99,19 @@ export default class Auth extends VuexModule{
       })
       await this.signIn({"email": form.email, "password": form.password})
     }
+  }
+
+  @Action({rawError: true})
+  listRoom() {
+    db.collection("rooms").where("members", 'array-contains', this.user?.uid || "")
+    .onSnapshot(res => {
+      this.setRoom([])
+      res.docs.map(doc => {
+        var room: Room = doc.data() as Room
+        room.id = doc.id;
+        this.rooms.push(room)
+      })
+    })
   }
 
 }

@@ -10,7 +10,7 @@
             { rules: [
                 { type: 'email', message: 'The input is not valid E-mail!', },
                 { required: true, message: 'Please input your E-mail!', }, ],
-            }, ]"
+            } ]"
           placeholder="email"
         >
           <a-icon slot="prefix" type="mail" style="color: rgba(0,0,0,.25)" />
@@ -55,7 +55,7 @@ export default class LoginFormComponent extends Vue {
     firebase.auth().onAuthStateChanged(async currentUser => {
       auth.alreadyLoggedIn();
       if (auth.user) {
-        const path:string = this.$route.query?.page?.toString() || "chat";
+        const path:string = this.$route.query?.page?.toString() || "create-room";
         this.$router.push(path)
       } else {
         this.$router.push("/")

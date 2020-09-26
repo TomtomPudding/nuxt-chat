@@ -8,7 +8,9 @@
           <a-list-item  style="margin-bottom: 0" slot="renderItem" slot-scope="item, index">
 
             <div class="background-line">
-              <div v-if="item.id == userId">
+              <div v-if="item.id == ''">
+              </div>
+              <div v-else-if="item.id == user.uid">
                 <UserMessageBox :text="item.text" style="z-index: 10;background-color: inherit;" />
               </div>
               <div v-else>
@@ -23,7 +25,7 @@
           </div>
         </a-list>
       </div>
-      <MessageForm :name="userName" :id="userId" @addMessage="addMessage" />
+      <MessageForm :name="user.name" :id="user.uid" :photoURL="user.photoURL" @addMessage="addMessage" />
     </div>
   </div>
 </template>
@@ -32,7 +34,10 @@ import { Component, Watch, Vue } from 'nuxt-property-decorator'
 import MemberMessageBox from '~/components/MemberMessageBox.vue'
 import UserMessageBox from '~/components/UserMessageBox.vue'
 import MessageForm from '~/components/MessageForm.vue'
+
 import {Chat, ChatLayout} from '@/interfaces/Chat'
+import { updateChatLog, roomDetail } from '@/plugins/firebase-store';
+import { auth } from '@/store/auth';
 
 // 背景用
 var beforeLine =  [{"clip-path":""}];
@@ -48,17 +53,20 @@ var userPoint = {"rightX": 0.0, "leftX" : 0.0, "direction": true};
   }
 })
 export default class MessageList extends Vue {
-  data:ChatLayout[] = [];
+  data:ChatLayout[] = [{ "id": "", "name": "", "text": "", "photoURL": "","line": null, "space": null }];
   loading = false;
   busy =  false;
-  userId = "001";
-  userName = "Tom"
   lastUserId = "";
 
-  beforeMount() {
-    this.fetchData((res:any):any => {
-      this.data = res.results;
-    });
+  get user() {
+    return auth.user || {
+      "uid": "",
+      "name": "unknown",
+      "email": "",
+      "photoURL": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+      "friends": [],
+      "rooms": []
+    };
   }
 
   @Watch("data")
@@ -71,49 +79,30 @@ export default class MessageList extends Vue {
   }
 
 
-  created() {
+  async beforeCreate() {
     // ここでデータを取得更新
-    const initData = [
-      {"id": "001", "name": "Tom", "text": "テスト１", "line": null, "space": null},
-      {"id": "002", "name": "Tom", "text": "テスト2", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト3", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト4", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト5", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト6", "line": null, "space": null},
-      {"id": "002", "name": "Tom", "text": "テスト7", "line": null, "space": null},
-      {"id": "002", "name": "Tom", "text": "テスト8", "line": null, "space": null},
-      {"id": "002", "name": "Tom", "text": "テスト9", "line": null, "space": null},
-      {"id": "002", "name": "Tom", "text": "テスト１0", "line": null, "space": null},
-      {"id": "002", "name": "Tom", "text": "テスト１1", "line": null, "space": null},
-      {"id": "003", "name": "Tom", "text": "テスト１2", "line": null, "space": null},
-      {"id": "002", "name": "Tom", "text": "テスト１3", "line": null, "space": null},
-      {"id": "002", "name": "Tom", "text": "テスト１4", "line": null, "space": null},
-      {"id": "002", "name": "Tom", "text": "テスト１5", "line": null, "space": null},
-      {"id": "002", "name": "Tom", "text": "テスト１6", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト１7", "line": null, "space": null},
-      {"id": "002", "name": "Tom", "text": "テスト１8", "line": null, "space": null},
-      {"id": "002", "name": "Tom", "text": "テスト１9", "line": null, "space": null},
-      {"id": "001", "name": "Tom", "text": "テスト20", "line": null, "space": null}];
+    var initData: ChatLayout[] = [];
+
+    const chatLogs = await roomDetail(this.$route.params.id)
+    if (chatLogs != null) {
+      var log: ChatLayout[] = chatLogs.chatLog.map(res => {
+        return {
+          "id": res.id,
+          "name": res.name,
+          "text": res.text,
+          "photoURL": res.photoURL,
+          "line": null,
+          "space": null
+        }
+      })
+      initData = log.length > 0 ? log : [];
+    }
+
     this.data = initData
-    if(this.data.length <= 0) return;
+    if(this.data.length <= 0) {
+      initData.push({ "id": "", "name": "", "text": "", "photoURL": "","line": null, "space": null })
+      return;
+    }
     // UI背景css 作成
     this.emptyUser();
 
@@ -122,12 +111,12 @@ export default class MessageList extends Vue {
     this.initPosition(data[0]);
     // 背景情報格納
     data.slice(1).forEach((item, index) =>{
-      if((this.lastUserId != this.userId) && (item.id == this.userId)) {
+      if((this.lastUserId != this.user.uid) && (item.id == this.user.uid)) {
         this.drawRightLine();
-      } else if((this.lastUserId == this.userId) && (item.id != this.userId)) {
+      } else if((this.lastUserId == this.user.uid) && (item.id != this.user.uid)) {
         this.drawLeftLine();
       } else {
-        if(this.userId == this.lastUserId) {
+        if(this.user.uid == this.lastUserId) {
           this.drawUserLine();
         } else {
           this.drawMemberLine();
@@ -136,34 +125,27 @@ export default class MessageList extends Vue {
     });
   }
 
-  fetchData(callback:any) {
-      // reqwest({
-      //   url: fakeDataUrl,
-      //   type: 'json',
-      //   method: 'get',
-      //   contentType: 'application/json',
-      //   success: res => {
-      //     callback(res);
-      //   },
-      // });
-  }
-
   addMessage(message: Chat) {
     message.text = message.text.replace("\n","<br>");
     const data:ChatLayout =
-      { "id": message.id, "name": message.name, "text": message.text, "line": null, "space": null }
+      { "id": message.id, "name": message.name, "text": message.text, "photoURL": message.photoURL,"line": null, "space": null }
+
+    this.data.push(data);
+
     if(this.lastUserId == "") {
+      this.data.shift();
+      updateChatLog(this.$route.params.id, this.data as Chat[])
       this.initPosition(data);
       return;
     }
 
-    this.data.push(data)
-    if((this.lastUserId != this.userId) && (message.id == this.userId)) {
+    updateChatLog(this.$route.params.id, this.data as Chat[])
+    if((this.lastUserId != this.user.uid) && (message.id == this.user.uid)) {
       this.drawRightLine();
-    } else if((this.lastUserId == this.userId) && (message.id != this.userId)) {
+    } else if((this.lastUserId == this.user.uid) && (message.id != this.user.uid)) {
       this.drawLeftLine();
     } else {
-      if(this.userId == this.lastUserId) {
+      if(this.user.uid == this.lastUserId) {
         this.drawUserLine();
       } else {
         this.drawMemberLine();
@@ -182,7 +164,7 @@ export default class MessageList extends Vue {
   // 以下のメソッドは背景生成処理
   private initPosition(data: ChatLayout) {
     this.lastUserId = data.id
-    if(this.userId == data.id) {
+    if(this.user.uid == data.id) {
       userPoint = {"rightX": 90, "leftX" : 85, "direction": true}
     } else {
       bottomPoint = {"rightX": 16, "leftX" : 9, "reply": {"id": data.id, "count": 0, "direction": true}}
@@ -309,6 +291,7 @@ export default class MessageList extends Vue {
     .message-box {
       overflow-y: auto;
       overflow-x: hidden;
+      min-height: 80vh;
       max-height: 80vh;
       padding: 0px 20px;
     }

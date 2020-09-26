@@ -4,6 +4,7 @@
 export interface Chat {
   id: string,
   name: string,
+  photoURL: string,
   text: string
 }
 

@@ -9,7 +9,8 @@ const middleware:Middleware = ({ route, store, redirect }) => {
     return
   }
   if(targetPath.indexOf(route.name || "") == -1){
-    redirect('/', {"page": route.name || ""})
+    // redirect('/', {"page": route.params[0]|| ""})
+    redirect('/')
   }
 }
 export default middleware

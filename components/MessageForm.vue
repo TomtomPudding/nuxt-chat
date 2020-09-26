@@ -18,6 +18,7 @@
 
           <input type="hidden" name="id" :text="id">
           <input type="hidden" name="name" :value="name">
+          <input type="hidden" name="photoURL" :value="photoURL">
         </a-col>
         <a-col :span="4">
           <div class="submit" @click="handlerAddMessage">Send</div>
@@ -34,7 +35,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import {Chat} from '@/interfaces/Chat';
 
 @Component
-export default class MesssageForm extends Vue {
+export default class MessageForm extends Vue {
 
   @Prop({ type: String, required: true })
   id!: string;
@@ -44,36 +45,25 @@ export default class MesssageForm extends Vue {
 
   text: string = "";
 
+  @Prop({ type: String, required: true })
+  photoURL!: string;
+
   handlerAddMessage() {
     this.addMessage();
   }
 
   handlerEnter(event: KeyboardEvent) {
-      // const data = this.data;
-      // this.loading = true;
-      // if (data.length > 14) {
-      //   this.$message.warning('Infinite List loaded all');
-      //   this.busy = true;
-      //   this.loading = false;
-      //   return;
-      // }
-      // this.fetchData(res => {
-      //   this.data = data.concat(res.results);
-      //   this.loading = false;
-      // });
-    // event.preventDefault();
 
 
     if(event.shiftKey){
       return false;
     }
-    // const message = (<HTMLInputElement>event.target).value;
     this.addMessage();
     event.preventDefault();
   }
 
   private addMessage() {
-    const message:Chat = {"id": this.id, "name": this.name, "text": this.text};
+    const message:Chat = {"id": this.id, "name": this.name,"text": this.text, "photoURL": this.photoURL};
     this.text = "";
     this.$emit('addMessage', message);
   }

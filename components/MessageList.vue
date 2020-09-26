@@ -98,7 +98,6 @@ export default class MessageList extends Vue {
       initData = log.length > 0 ? log : [];
     }
 
-    debugger
     this.data = initData
     if(this.data.length <= 0) {
       initData.push({ "id": "", "name": "", "text": "", "photoURL": "","line": null, "space": null })

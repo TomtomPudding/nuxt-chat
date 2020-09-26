@@ -1,13 +1,17 @@
 <template>
     <a-layout-sider theme="dark"  :style="{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }" class="left-bar">
-        <a-menu theme="dark" :defaultSelectedKeys="['1']" mode="inline">
+        <a-menu
+        theme="dark"
+        :defaultSelectedKeys="['1']"
+        :default-open-keys="['team', 'friend']"
+        mode="inline">
             <a-sub-menu key="option">
               <span slot="title"><a-icon type="bell" /><span>Option</span></span>
               <a-menu-item key="usergroup-add"><a-icon type="usergroup-add" />New Team
                 <nuxt-link to="/create-room"></nuxt-link>
               </a-menu-item>
             </a-sub-menu>
-            <a-sub-menu key="team">
+            <a-sub-menu key="team" :reverseArrow="true">
               <span slot="title"><a-icon type="home" /><span>Room</span></span>
               <template v-for="(room) in rooms">
                 <a-menu-item :key="room.id" >

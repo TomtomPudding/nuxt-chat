@@ -70,9 +70,13 @@ export default {
   ** See https://nuxtjs.org/api/configuration-build/
   */
   build: {
+    transpile: ['antd-ui']
   },
   typescript: {
     typeCheck: true,
     ignoreNotFoundWarnings: true
+  },
+  scripts: {
+    generate: "nuxt generate"
   }
 }

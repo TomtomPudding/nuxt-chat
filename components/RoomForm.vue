@@ -41,7 +41,7 @@
     >
       <a-input
         v-decorator="[
-          `names[${rowkey}]`,
+          `rooms[${rowkey}]`,
           { validateTrigger: ['change', 'blur'],
             rules: [
               { required: true, whitespace: true, message: 'Please input userId or delete this field.'}
@@ -145,11 +145,12 @@ export default class RoomFormComponent extends Vue {
     event.preventDefault();
     this.form.validateFields((err: any, values: any) => {
       if (err == null) {
+        console.log(values["rooms"])
         const form: Room = {
           "id": null,
           "name": values["roomName"],
           "photoURL":  values["photoURL"],
-          "members": values["members"].concat([this.user.uid]),
+          "members": values["rooms"].concat([this.user.uid]),
           "chatLog": []};
         addRoom(form);
       }

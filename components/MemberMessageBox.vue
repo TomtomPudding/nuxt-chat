@@ -4,7 +4,7 @@
       <div class="avatar">
         <div class="avatar-inner">
           <div class="avatar-image">
-            <img src="https://avatars0.githubusercontent.com/u/49276351?s=200&u=9b6762442a5d06cfc3b6890cbcac02ab23584b09&v=4" width="60" height="60">
+            <img :src="photoURL" width="60" height="60">
           </div>
         </div>
       </div>
@@ -31,6 +31,9 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 export default class MyMesssageBox extends Vue {
   @Prop({ type: String, required: true })
   text: string
+
+  @Prop({ type: String, required: true })
+  photoURL!: string;
 }
 </script>
 

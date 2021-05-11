@@ -34,6 +34,6 @@
     "prettier-eslint": "^9.0.1",
     "sass-loader": "^9.0.2",
     "vuex-module-decorators": "^0.17.0",
-    "lodash": ">=4.17.19"
+    "lodash": ">=4.17.21"
   }
 }
